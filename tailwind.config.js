@@ -12,6 +12,8 @@ export default {
           light: '#ffb340',
           dark: '#cc7a00'
         },
+        // 自定义主色调
+        'custom-primary': '#ff9900',
         // 文本颜色
         text: {
           light: '#ffffff',
