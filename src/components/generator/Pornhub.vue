@@ -14,6 +14,7 @@
           >
             <template v-if="!reverseHighlight">
               <span
+                ref="prefixRef"
                 @input="prefixHandleInput"
                 @compositionstart="prefixHandleCompositionStart"
                 @compositionend="prefixHandleCompositionEnd"
@@ -21,12 +22,11 @@
                 :style="{ color: prefixColor }"
                 :contenteditable="prefixEditable"
                 spellcheck="false"
-              >
-                {{ prefixText }}
-              </span>
+              ></span>
               <!-- 分隔符 -->
               <span class="text-transparent">.</span>
               <span
+                ref="suffixRef"
                 @input="suffixHandleInput"
                 @compositionstart="suffixHandleCompositionStart"
                 @compositionend="suffixHandleCompositionEnd"
@@ -34,12 +34,11 @@
                 :style="{ color: suffixColor, 'background-color': bgColor }"
                 :contenteditable="suffixEditable"
                 spellcheck="false"
-              >
-                {{ suffixText }}
-              </span>
+              ></span>
             </template>
             <template v-else>
               <span
+                ref="suffixRef"
                 @input="suffixHandleInput"
                 @compositionstart="suffixHandleCompositionStart"
                 @compositionend="suffixHandleCompositionEnd"
@@ -47,10 +46,9 @@
                 :style="{ color: suffixColor, 'background-color': bgColor }"
                 :contenteditable="suffixEditable"
                 spellcheck="false"
-              >
-                {{ prefixText }}
-              </span>
+              ></span>
               <span
+                ref="prefixRef"
                 @input="prefixHandleInput"
                 @compositionstart="prefixHandleCompositionStart"
                 @compositionend="prefixHandleCompositionEnd"
@@ -58,9 +56,7 @@
                 :style="{ color: prefixColor }"
                 :contenteditable="prefixEditable"
                 spellcheck="false"
-              >
-                {{ suffixText }}
-              </span>
+              ></span>
             </template>
           </div>
         </div>
@@ -154,6 +150,7 @@ import FontSelector from '@/components/FontSelector.vue';
 import { useStore } from '@/stores/store';
 import ExportBtn from '@/components/ExportBtn.vue';
 import { useLogoGenerator } from '@/composables/useLogoGenerator';
+import { ref, watch, onMounted } from 'vue';
 
 const store = useStore();
 
@@ -192,6 +189,25 @@ const {
   prefixColorInitial: '#ffffff',
   suffixColorInitial: '#000000',
   bgColorInitial: '#ff9900'
+});
+
+const prefixRef = ref(null);
+const suffixRef = ref(null);
+
+onMounted(() => {
+  if (prefixRef.value) prefixRef.value.textContent = prefixText.value;
+  if (suffixRef.value) suffixRef.value.textContent = suffixText.value;
+});
+
+watch(prefixText, (val) => {
+  if (prefixRef.value && prefixRef.value.textContent !== val) {
+    prefixRef.value.textContent = val;
+  }
+});
+watch(suffixText, (val) => {
+  if (suffixRef.value && suffixRef.value.textContent !== val) {
+    suffixRef.value.textContent = val;
+  }
 });
 
 // 分享到Twitter
