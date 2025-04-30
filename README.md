@@ -1,66 +1,118 @@
-<img align="right" src="https://postimg.aliavv.com/mbp/adpsj.png"/>
+# EasyLogo
 
-# Logoly —— A Pornhub Flavour Logo Generator
+一个简单易用的在线 Logo 生成器，基于 Vue 3 + Vite + Tailwind CSS 构建。
 
-![](https://img.shields.io/badge/Deployed%20on-Vercel-9cf) ![GitHub last commit](https://img.shields.io/github/last-commit/bestony/logoly.svg) ![GitHub issues](https://img.shields.io/github/issues/bestony/logoly.svg) ![GitHub stars](https://img.shields.io/github/stars/bestony/logoly.svg?style=social)
+![GitHub last commit](https://img.shields.io/github/last-commit/nuoai/easylogo.svg) ![GitHub issues](https://img.shields.io/github/issues/nuoai/easylogo.svg) ![GitHub stars](https://img.shields.io/github/stars/nuoai/easylogo.svg?style=social)
 
-**A Simple Online Logo Generator for People Who Want to Design Logos Easily.**
+**EasyLogo - 让每个人都能轻松设计专业 Logo**
 
-## Screenshot
+## 功能特点
 
-![](https://i.loli.net/2019/03/24/5c96e02e97aff.png)
+- 🎨 自定义文本和颜色
+- 🖼️ 支持导出 PNG 和 SVG 格式
+- 📱 响应式设计，支持移动端
+- 💾 本地存储，自动保存编辑内容
+- 🌍 支持多语言（简体中文/英文）
+- 🎯 实时预览
+- 🎨 丰富的颜色选择器
+- 📏 可调节字体大小
+- 🔄 支持反向高亮效果
 
-## Features
+## 开发指南
 
-- generate logo like **PornHub** or **OnlyFans**
-- download your own logo in PNG/SVG format
-- customize logo color
-- customize logo font size
+### 环境要求
 
-## How to Use
+- Node.js >= 18.x
+- npm >= 9.x
 
-1. open the Logoly website: [https://logoly.pro/](https://logoly.pro/)
-2. edit the text in the box
-3. change color & font size as you like
-4. click the **Export** button to download the image
+### 安装依赖
 
-## TODO
+```bash
+npm install
+```
 
-- share it on Facebook
-- customize fonts
+### 开发服务器
 
-## Changelog
+```bash
+npm run dev
+```
 
-See [Changelog](Changelog.md)
+### 构建生产版本
 
-## How to Contribute
+```bash
+npm run build
+```
 
-For those who want to request new features or submit bug reports, click [this link](https://github.com/bestony/logoly/issues/new/choose) to open a new issue.
+### 运行测试
 
-For those who want to play around with this project, read the `Get Started` section.
+```bash
+# 运行单元测试
+npm run test
 
-At the end of this section, I suggest you read the [Contributing Guide](Contributing.md).
+# 运行测试覆盖率报告
+npm run test:coverage
+```
 
-## Requirements
+### 代码规范
 
-- Node.js
+```bash
+# 运行 ESLint
+npm run lint
 
-## Get Started
+# 格式化代码
+npm run format
+```
 
-1. clone this project
-2. install dependencies with `npm install` at the project root directory
-3. start the development server with `npm run dev`
-4. make changes
-5. build with `npm run build`
+## 项目结构
 
-## Related Project
+```
+src/
+├── assets/        # 静态资源
+├── components/    # Vue 组件
+├── composables/   # 组合式函数
+├── stores/        # Pinia 状态管理
+├── utils/         # 工具函数
+└── views/         # 页面视图
+```
 
-- [Logoly.pro MiniProgram](https://github.com/GHLandy/logoly-pro)
+## 主要模块说明
 
-## Sponsors
+### 组件
 
-[<img src="https://postimg.aliavv.com/picgo/20190331211014.png" height=40>](http://www.leancloud.app/)
+- `LogoGenerator.vue`: Logo 生成器主组件
+- `ExportBtn.vue`: 导出按钮组件
+- `FontSelector.vue`: 字体选择器组件
 
-## LICENSE
+### 组合式函数
 
-[WTFPL 2](LICENSE)
+- `useLogoGenerator`: Logo 生成核心逻辑
+- `useEditableText`: 文本编辑逻辑
+- `useColorPicker`: 颜色选择逻辑
+
+### 工具函数
+
+- `exportUtils`: 导出相关工具函数
+
+## 使用说明
+
+1. 在文本框中输入你想要的前缀和后缀文本
+2. 使用颜色选择器自定义文本和背景颜色
+3. 调整字体大小和字体样式
+4. 选择是否启用透明背景或反向高亮
+5. 点击导出按钮，选择导出格式（PNG/SVG）
+
+## 贡献指南
+
+1. Fork 本仓库
+2. 创建你的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交你的更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启一个 Pull Request
+
+## 许可证
+
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+## 更新日志
+
+详见 [CHANGELOG.md](CHANGELOG.md)

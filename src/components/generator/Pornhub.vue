@@ -1,55 +1,65 @@
 <template>
-  <div class="pornhub">
-    <v-tooltip text="Edit the text to create your own logo" location="top" model-value>
+  <div class="flex flex-col items-center">
+    <v-tooltip text="编辑文本创建你的Logo" location="top" model-value>
       <template v-slot:activator="{ props }">
-        <div v-bind="props" class="box">
+        <div v-bind="props" class="border border-gray-700 rounded-lg p-10 m-10 max-w-full">
           <div
-            class="editarea"
+            class="p-5 text-center font-bold"
             id="logo"
             :style="{
-              'font-size': fontSize + 'px',
+              'font-size': `${fontSize}px`,
               'background-color': transparentBgColor,
               'font-family': store.font
             }"
           >
             <template v-if="!reverseHighlight">
               <span
-                @input="updatePrefix"
-                class="prefix"
+                @input="prefixHandleInput"
+                @compositionstart="prefixHandleCompositionStart"
+                @compositionend="prefixHandleCompositionEnd"
+                class="text-text-light px-1.5"
                 :style="{ color: prefixColor }"
-                :contenteditable="store.editable"
+                :contenteditable="prefixEditable"
                 spellcheck="false"
               >
-                {{ store.prefix }}
+                {{ prefixText }}
               </span>
-              <!-- HACK: meaningless text: ".", just to split input area, see: #269 -->
-              <span style="font-size: 0">.</span>
+              <!-- 分隔符 -->
+              <span class="text-transparent">.</span>
               <span
-                class="postfix"
-                :style="{ color: suffixColor, 'background-color': postfixBgColor }"
-                :contenteditable="store.editable"
-                @input="updateSuffix"
+                @input="suffixHandleInput"
+                @compositionstart="suffixHandleCompositionStart"
+                @compositionend="suffixHandleCompositionEnd"
+                class="text-text-dark bg-primary px-2.5 rounded-logo"
+                :style="{ color: suffixColor, 'background-color': bgColor }"
+                :contenteditable="suffixEditable"
                 spellcheck="false"
-                >{{ store.suffix }}</span
               >
+                {{ suffixText }}
+              </span>
             </template>
             <template v-else>
               <span
-                class="postfix"
-                :style="{ color: suffixColor, 'background-color': postfixBgColor }"
-                :contenteditable="store.editable"
-                @input="updatePrefix"
+                @input="suffixHandleInput"
+                @compositionstart="suffixHandleCompositionStart"
+                @compositionend="suffixHandleCompositionEnd"
+                class="text-text-dark bg-primary px-2.5 rounded-logo"
+                :style="{ color: suffixColor, 'background-color': bgColor }"
+                :contenteditable="suffixEditable"
                 spellcheck="false"
-                >{{ store.prefix }}</span
               >
+                {{ prefixText }}
+              </span>
               <span
-                class="prefix"
-                @input="updateSuffix"
+                @input="prefixHandleInput"
+                @compositionstart="prefixHandleCompositionStart"
+                @compositionend="prefixHandleCompositionEnd"
+                class="text-text-light px-1.5"
                 :style="{ color: prefixColor }"
-                :contenteditable="store.editable"
+                :contenteditable="prefixEditable"
                 spellcheck="false"
               >
-                {{ store.suffix }}
+                {{ suffixText }}
               </span>
             </template>
           </div>
@@ -57,12 +67,12 @@
       </template>
     </v-tooltip>
 
-    <div class="customize mt-3">
-      <v-tooltip text="Pick a color you like" location="top" model-value>
+    <div class="flex flex-col md:flex-row justify-around w-full mb-12">
+      <v-tooltip text="选择你喜欢的颜色" location="top" model-value>
         <template v-slot:activator="{ props }">
-          <div v-bind="props" class="customize-color" id="prefixColor">
-            <div>
-              Prefix Text Color:
+          <div v-bind="props" class="flex flex-col space-y-2" id="prefixColor">
+            <div class="flex items-center">
+              <span class="mr-2">前缀文本颜色:</span>
               <v-menu :close-on-content-click="false" location="end">
                 <template v-slot:activator="{ props }">
                   <button
@@ -74,8 +84,8 @@
                 <v-color-picker mode="hex" hide-inputs v-model="prefixColor"></v-color-picker>
               </v-menu>
             </div>
-            <div>
-              Suffix Text Color:
+            <div class="flex items-center">
+              <span class="mr-2">后缀文本颜色:</span>
               <v-menu :close-on-content-click="false" location="end">
                 <template v-slot:activator="{ props }">
                   <button
@@ -87,96 +97,109 @@
                 <v-color-picker mode="hex" hide-inputs v-model="suffixColor"></v-color-picker>
               </v-menu>
             </div>
-            <div>
-              Suffix Background Color:
+            <div class="flex items-center">
+              <span class="mr-2">后缀背景颜色:</span>
               <v-menu :close-on-content-click="false" location="end">
                 <template v-slot:activator="{ props }">
                   <button
                     v-bind="props"
                     class="w-12 h-6 rounded ml-1 border-2 border-solid border-white"
-                    :style="{ 'background-color': postfixBgColor }"
+                    :style="{ 'background-color': bgColor }"
                   ></button>
                 </template>
-                <v-color-picker mode="hex" hide-inputs v-model="postfixBgColor"></v-color-picker>
+                <v-color-picker mode="hex" hide-inputs v-model="bgColor"></v-color-picker>
               </v-menu>
             </div>
             <div class="flex items-center">
-              Transparent Background: <v-checkbox-btn v-model="transparentBg"></v-checkbox-btn>
+              <span class="mr-2">透明背景:</span>
+              <v-checkbox-btn v-model="transparentBg"></v-checkbox-btn>
             </div>
           </div>
         </template>
       </v-tooltip>
 
-      <div class="customize-misc">
+      <div class="flex flex-col space-y-2">
         <div class="flex flex-col">
-          Font Size: {{ fontSize }}px
+          <span class="mb-1">字体大小: {{ fontSize }}px</span>
           <div class="-ml-1">
             <v-slider
               hide-details
               min="30"
               max="200"
               step="1"
-              color="#f90"
+              color="primary"
               v-model="fontSize"
             ></v-slider>
           </div>
         </div>
         <FontSelector />
         <div class="flex items-center">
-          Reverse Highlight: <v-checkbox-btn v-model="reverseHighlight"></v-checkbox-btn>
+          <span class="mr-2">反向高亮:</span>
+          <v-checkbox-btn v-model="reverseHighlight"></v-checkbox-btn>
         </div>
       </div>
     </div>
 
-    <div class="download-share">
+    <div class="flex justify-around w-4/5">
       <ExportBtn />
-      <v-btn @click="twitter" color="#1da1f2"
-        ><v-icon icon="mdi-twitter" class="mr-0.5"></v-icon> Tweet</v-btn
-      >
+      <v-btn @click="twitter" color="#1da1f2">
+        <v-icon icon="mdi-twitter" class="mr-0.5"></v-icon>分享到Twitter
+      </v-btn>
     </div>
   </div>
 </template>
 
 <script setup>
 import FontSelector from '@/components/FontSelector.vue';
-import { computed, ref } from 'vue';
 import { useStore } from '@/stores/store';
 import ExportBtn from '@/components/ExportBtn.vue';
-
-const prefixColor = ref('#ffffff');
-const suffixColor = ref('#000000');
-const postfixBgColor = ref('#ff9900');
-const fontSize = ref(60);
-const transparentBg = ref(false);
-const reverseHighlight = ref(false);
+import { useLogoGenerator } from '@/composables/useLogoGenerator';
 
 const store = useStore();
 
-const updatePrefix = (e) => {
-  if (!navigator.userAgent.toLowerCase().includes('firefox')) {
-    store.updatePrefix(e.target.childNodes[0].nodeValue);
-  }
-};
+// 使用Logo生成逻辑
+const {
+  // 状态
+  fontSize,
+  transparentBg,
+  reverseHighlight,
+  transparentBgColor,
+  
+  // 前缀相关
+  prefixText,
+  prefixEditable,
+  prefixIsComposing,
+  prefixHandleInput,
+  prefixHandleCompositionStart,
+  prefixHandleCompositionEnd,
+  prefixColor,
+  
+  // 后缀相关
+  suffixText,
+  suffixEditable,
+  suffixIsComposing,
+  suffixHandleInput,
+  suffixHandleCompositionStart,
+  suffixHandleCompositionEnd,
+  suffixColor,
+  
+  // 背景颜色
+  bgColor
+} = useLogoGenerator({
+  store,
+  prefixInitial: 'edit',
+  suffixInitial: 'me',
+  prefixColorInitial: '#ffffff',
+  suffixColorInitial: '#000000',
+  bgColorInitial: '#ff9900'
+});
 
-const updateSuffix = (e) => {
-  if (!navigator.userAgent.toLowerCase().includes('firefox')) {
-    store.updateSuffix(e.target.childNodes[0].nodeValue);
-  }
-};
-
+// 分享到Twitter
 const twitter = () => {
-  let url = 'https://logoly.pro';
-  let text = encodeURIComponent(`Built with #LogolyPro, by @xiqingongzi ${url}`);
+  const url = 'https://logoly.pro';
+  const text = encodeURIComponent(`使用 #LogolyPro 创建，作者 @xiqingongzi ${url}`);
   window.open(`https://twitter.com/intent/tweet?text=${text}`);
 };
-
-const transparentBgColor = computed(() => {
-  if (transparentBg.value) {
-    return 'transparent';
-  } else {
-    return '#000000';
-  }
-});
 </script>
 
 <style lang="stylus" scoped>
